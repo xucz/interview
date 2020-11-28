@@ -12,13 +12,12 @@ myEvents.prototype.on = function (name, fn) {
 myEvents.prototype.off = function (name, fn) {
     let events = this.events[name];
     if (events instanceof Array) {
-        let i = 0;
-        while(i < events.length) {
-            if (events[i] === fn) {
-                events.splice(i, 1);
-            } else {
-                i ++;
-            }
+        if (fn === undefined) {
+            this.events[name] = [];
+        } else {
+            this.events[name] = this.events[name].filter((f) => {
+                return f !== fn;
+            })
         }
     }
 }
