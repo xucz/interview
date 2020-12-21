@@ -10,7 +10,9 @@ function myPromise(fn) {
             this.status = 'resolved';
             this.value = val;
             this.onResolvedCallback.map((resolveFn) => {
-                resolveFn(val)
+                setTimeout(() => {
+                    resolveFn(val)
+                })
             })
         }
     };
@@ -19,7 +21,9 @@ function myPromise(fn) {
             this.status = 'rejected';
             this.value = reason;
             this.onRejectedCallback.map((rejectFn) => {
-                rejectFn(reason)
+                setTimeout(() => {
+                    rejectFn(reason)
+                })
             })
         }
     };
@@ -29,6 +33,7 @@ function myPromise(fn) {
         reject(e)
     }
 }
+// 待改进
 myPromise.prototype.then = function (resolveFn, rejectFn) {
     resolveFn = resolveFn instanceof Function ?  resolveFn : () => {};
     rejectFn = rejectFn instanceof Function ?  rejectFn : () => {};
