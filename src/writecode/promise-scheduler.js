@@ -1,21 +1,22 @@
-function PromiseScheduler() {
+function PromiseScheduler(max = Infinity) {
     this.list = [];
-    this.max = 2;
+    this.max = max;
+    this.current = 0;
 }
-PromiseScheduler.prototype.add = function (fn) {
-    this.list.push(fn)
-}
-PromiseScheduler.prototype.request = function () {
-    if(this.list.length > 0) {
-        let fn = this.list.shift();
-        fn().then(() => {
-            this.request();
-        })
+PromiseScheduler.prototype.add = function (task) {
+    if (task) {
+        this.list.push(task);
+        this.scheduler();
     }
 }
-PromiseScheduler.prototype.run = function () {
-    for (let i = 0; i < this.max; i ++) {
-        this.request();
+PromiseScheduler.prototype.scheduler = function () {
+    if (this.current < this.max && this.list.length > 0) {
+        let task = this.list.shift();
+        this.current = this.current + 1;
+        task().then(() => {
+            this.current = this.current - 1;
+            this.scheduler();
+        })
     }
 }
 
@@ -23,7 +24,7 @@ const timeout = time => new Promise(resolve => {
     setTimeout(resolve, time);
 })
 
-const scheduler = new PromiseScheduler();
+const scheduler = new PromiseScheduler(2);
 
 const addTask = (time,order) => {
     scheduler.add(() => timeout(time).then(()=>console.log(order)))
@@ -35,4 +36,3 @@ addTask(500, '2');
 addTask(300, '3');
 addTask(400, '4');
 
-scheduler.run()
