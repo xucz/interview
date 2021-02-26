@@ -18,3 +18,4 @@
 - extends
 - jsonp
 - reduce
+- 异步方法串行｜并行
