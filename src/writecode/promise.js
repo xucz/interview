@@ -4,33 +4,34 @@ function myPromise(fn) {
     this.value = null;
     this.onResolvedCallback = [];
     this.onRejectedCallback = [];
-    
-    let resolve = (val) => {
-        if (this.status === 'pending') {
-            this.status = 'resolved';
-            this.value = val;
-            this.onResolvedCallback.map((resolveFn) => {
-                setTimeout(() => {
-                    resolveFn(val)
-                })
-            })
-        }
-    };
-    let reject = (reason) => {
-        if (this.status === 'pending') {
-            this.status = 'rejected';
-            this.value = reason;
-            this.onRejectedCallback.map((rejectFn) => {
-                setTimeout(() => {
-                    rejectFn(reason)
-                })
-            })
-        }
-    };
+    this._resolve = this._resolve.bind(this);
+    this._reject = this._reject.bind(this);
     try {
-        fn(resolve, reject)
+        fn(this._resolve, this._reject)
     } catch (e) {
-        reject(e)
+        this._reject(e)
+    }
+}
+myPromise.prototype._resolve = function (val) {
+    if (this.status === 'pending') {
+        this.status = 'fulfilled';
+        this.value = val;
+        this.onResolvedCallback.map((resolveFn) => {
+            setTimeout(() => {
+                resolveFn(val)
+            })
+        })
+    }
+}
+myPromise.prototype._reject = function (reason) {
+    if (this.status === 'pending') {
+        this.status = 'rejected';
+        this.value = reason;
+        this.onRejectedCallback.map((rejectFn) => {
+            setTimeout(() => {
+                rejectFn(reason)
+            })
+        })
     }
 }
 // 待改进
@@ -38,12 +39,38 @@ myPromise.prototype.then = function (resolveFn, rejectFn) {
     resolveFn = resolveFn instanceof Function ?  resolveFn : () => {};
     rejectFn = rejectFn instanceof Function ?  rejectFn : () => {};
     
-    if (this.status = 'pending') {
-        this.onResolvedCallback.push(resolveFn);
-        this.onRejectedCallback.push(rejectFn);
-    }
+    return new myPromise((resolve, reject) => {
+        this.onResolvedCallback.push((value) => {
+            try {
+                const result = resolveFn(value);
+                if (result instanceof myPromise) {
+                    result.then(resolve, reject)
+                } else {
+                    resolve(result)
+                }
+            } catch (e) {
+                reject(e)
+            }
+        })
+        this.onRejectedCallback.push((value) => {
+            try {
+               const result = rejectFn(value)
+                if (result instanceof myPromise) {
+                    result.then(resolve, reject)
+                } else {
+                    resolve(result)
+                }
+            } catch (e) {
+                resolve(e)
+            }
+        })
+    })
+    
+    
 }
-
+myPromise.prototype.catch = function (onRejected) {
+    return this.then(null, onRejected);
+}
 myPromise.all = function (promises) {
     let count = 0;
     return new myPromise((resolve, reject) => {
@@ -78,7 +105,7 @@ myPromise.reject = function (reason) {
         reject(reason);
     })
 }
-
+// 测试1
 new myPromise((resolve, reject) => {
     setTimeout(() => {
         resolve(1)
@@ -86,3 +113,23 @@ new myPromise((resolve, reject) => {
 }).then((res) => {
     console.log(res)
 })
+
+// 测试2
+new myPromise((resolve) => {
+    setTimeout(() => {
+        resolve(1);
+    }, 400);
+}).then((res) => {
+    console.log(res);
+    return new myPromise((resolve) => {
+        setTimeout(() => {
+            resolve(2);
+        }, 500);
+    });
+}).then((res) => {
+    console.log(res);
+    throw new Error('this is error')
+}).catch((err) => {
+    console.log('-->', err);
+})
+
