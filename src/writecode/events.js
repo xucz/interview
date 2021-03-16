@@ -1,45 +1,51 @@
-// 发布订阅模式
-function myEvents() {
+// 发布订阅模式 eventBus
+function EventsEmiter() {
     this.events = {};
 }
-myEvents.prototype.on = function (name, fn) {
-    if (this.events[name]) {
-        this.events[name].push(fn);
-    } else {
-        this.events[name] = [fn];
+EventsEmiter.prototype.on = function (name, fn) {
+    if (!this.events[name]) {
+        this.events[name] = [];
     }
+    this.events[name].push(fn);
+    
+    // 可以进行链式调用
+    return this;
 }
-myEvents.prototype.off = function (name, fn) {
+EventsEmiter.prototype.off = function (name, fn) {
     if (this.events[name]) {
-        if (fn === undefined) {
-            delete this.events[name];
-        } else {
+        if (fn) {
             this.events[name] = this.events[name].filter((f) => {
                 return f !== fn;
             })
+        } else {
+            delete this.events[name];
         }
     }
+    return this;
 }
-myEvents.prototype.emit = function (name, ...args) {
-    if (this.events[name]) {
-        this.events[name].forEach((fn) => {
-            fn.apply(null, args);
-        })
+EventsEmiter.prototype.emit = function (name, ...args) {
+    if (!this.events[name]) {
+        console.log('没有找到对应的事件');
+        return this;
     }
+    this.events[name].forEach((fn) => {
+        fn.apply(null, args);
+    })
+    return this;
 }
-myEvents.prototype.once = function (name, fn) {
-    this.on(name, function cb () {
-        fn();
-        this.off(name, cb);
-    });
+EventsEmiter.prototype.once = function (name, fn) {
+    const func = (...args) => {
+        this.off(name, fn);
+    }
+    this.on(name, func);
+    return this;
 }
 
 // 测试
-const eventBus = new myEvents()
+const eventBus = new EventsEmiter()
 const task1 = () => { console.log('task1'); }
 const task2 = () => { console.log('task2'); }
-eventBus.on('task', task1)
-eventBus.on('task', task2)
+eventBus.on('task', task1).on('task', task2)
 
 setTimeout(() => {
     eventBus.emit('task')
