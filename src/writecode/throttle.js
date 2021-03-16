@@ -1,7 +1,8 @@
 // 截流
+// 首次立即执行，然后一定时间内，不再执行
 function throttle(fn, wait) {
     let flag = false;
-    return (...args) => {
+    return function(...args) {
         if (!flag) {
             flag = true;
             fn.apply(this, args);
@@ -12,14 +13,27 @@ function throttle(fn, wait) {
     }
 }
 
+// 首次立即执行，然后一定时间内，不再执行
 function throttle2(fn, wait) {
     let  pre = new Date();
     return function(...args) {
-        let context = this;
         let now = new  Date();
         if (now - pre >= wait) {
-            fn.apply(context, args);
+            fn.apply(this, args);
             pre = now;
+        }
+    }
+}
+
+// 首次延时执行
+function throttle3(fn, wait) {
+    let timer = null;
+    return function () {
+        if (!timer) {
+            setTimeout(() => {
+                fn.apply(this, arguments);
+                timer = null;
+            }, wait)
         }
     }
 }
