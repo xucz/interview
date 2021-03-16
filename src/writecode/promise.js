@@ -71,19 +71,25 @@ myPromise.prototype.then = function (resolveFn, rejectFn) {
 myPromise.prototype.catch = function (onRejected) {
     return this.then(null, onRejected);
 }
+// promises 中可以有非promise对象
 myPromise.all = function (promises) {
-    let count = 0;
     return new myPromise((resolve, reject) => {
+        let count = 0;
         let arr = [];
-        promises.map((p, index) => {
-            p.then((res) => {
+        for (let i = 0; i < promises.length; i++) {
+            if (promises[i] instanceof myPromise) {
+                promises[i].then((res) => {
+                    count ++;
+                    arr[i] = res;
+                    if (count === promises.length - 1) {
+                        resolve(arr)
+                    }
+                })
+            } else {
                 count ++;
-                arr[index] = res;
-                if (count === promises.length - 1) {
-                    resolve(arr)
-                }
-            })
-        })
+                arr[i] = promises[i];
+            }
+        }
     })
 }
 myPromise.prototype.race = function (promises) {
@@ -133,3 +139,10 @@ new myPromise((resolve) => {
     console.log('-->', err);
 })
 
+Promise.resolve(new Promise((r) => {
+    setTimeout(()=>{
+        r(123)
+    }, 2000)
+})).then((r)=>{
+    console.log(r)
+})
