@@ -1,4 +1,5 @@
 // 截流
+// 应用场景 resize scroll
 // 首次立即执行，然后一定时间内，不再执行
 function throttle(fn, wait) {
     let flag = false;
