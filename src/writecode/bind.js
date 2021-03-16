@@ -1,6 +1,6 @@
-Function.prototype.myBind = function (context) {
-    return (...args) => {
-        this.apply(context, args);
+Function.prototype.myBind = function (context, ...args1) {
+    return (...args2) => {
+        this.apply(context, args1.concat(args2));
     }
 }
 
@@ -11,4 +11,4 @@ function test(...args) {
     console.log(args)
 }
 
-test.myBind(obj)(1, 2, 3);
+test.myBind(obj)(0, 1, 2, 3);
