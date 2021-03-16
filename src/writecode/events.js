@@ -36,6 +36,7 @@ EventsEmiter.prototype.emit = function (name, ...args) {
 EventsEmiter.prototype.once = function (name, fn) {
     const func = (...args) => {
         this.off(name, fn);
+        fn.apply(null, args)
     }
     this.on(name, func);
     return this;
