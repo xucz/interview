@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    /**
+     * 计算FPS原理
+     * 正常而言 requestAnimationFrame 这个方法在一秒内会执行 60 次
+     * 假设动画在时间 A 开始执行，在时间 B 结束，耗时 x ms
+     * 而中间 requestAnimationFrame 一共执行了 n 次
+     * 则此段动画的帧率大致为：n / (B - A)。
+     * 参考链接：https://www.cnblogs.com/coco1s/archive/2017/12/13/8029582.html
+     */
+    let lastFameTime = Date.now();
+    let frame = 0; // 统计动画次数
+    function loop() {
+        requestAnimationFrame(function () {
+            let now = Date.now();
+            frame ++;
+            if (now > lastFameTime + 1000) {
+                // 转化为1s 多少次动画
+                let fps = Math.round(frame / ((now - lastFameTime) / 1000));
+                console.log(`${new Date()} 1S内 FPS：`, fps);
+                frame = 0;
+                lastFameTime = now;
+            }
+
+            loop();
+        })
+    }
+    loop();
+</script>
+</html>
