@@ -5,14 +5,19 @@ export function Link(props) {
     let {history} = useContext(RouterContext);
     let {
         to,
+        onClick,
         ...rest
     } = props;
     
     const href = history.createHref(to);
-    function link() {
-    
+    let linkProps = {
+        ...rest,
+        onClick: event => {
+            if (onClick) onClick(event);
+            // event.preventDefault();
+        }
     }
     return (
-        <a {...rest} href={href} onClick={link} />
+        <a {...linkProps} href={href} />
     )
 }

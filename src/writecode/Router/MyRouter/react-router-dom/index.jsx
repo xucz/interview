@@ -22,5 +22,6 @@ export function useHistory() {
     return useContext(RouterContext)
 }
 
-export { HashRouter } from "./HashRouter.jsx";
+export { default as HashRouter } from "./HashRouter.jsx";
+export { default as BrowserRouter} from "./BrowserRouter.jsx";
 export { Link } from "./Link.jsx";
