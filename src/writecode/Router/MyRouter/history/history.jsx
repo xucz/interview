@@ -16,7 +16,7 @@ export function createHashHistory() {
     function push(to, state) {
         let hashChanged = getHashPath() !== to;
         if (hashChanged) {
-        
+            window.location.href = '#' + to;
         }
     }
     // 创建和管理listeners的方法
@@ -42,9 +42,13 @@ export function createHashHistory() {
     window.addEventListener('hashchange', () => {
         handlePop();
     })
+    function createHref(to) {
+        return '#' + to;
+    }
     let history = {
         location,
         go,
+        createHref,
         back() {
             go(-1)
         },

@@ -23,3 +23,4 @@ export function useHistory() {
 }
 
 export { HashRouter } from "./HashRouter.jsx";
+export { Link } from "./Link.jsx";
