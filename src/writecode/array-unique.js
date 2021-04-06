@@ -20,18 +20,19 @@ function unique2(arr) {
  * 两层循环
  * @param arr
  */
-function unique3(arr) {
-    for(let i = 0; i < arr.length; i++) {
-        let current = arr[i];
-        for (let j = i + 1; j < arr.length; j++) {
-            if (arr[j] === current) {
-                arr.splice(j, 1);
-                j --;
-            }
-        }
-    }
-    return arr;
-}
+// 错误
+// function unique3(arr) {
+//     for(let i = 0; i < arr.length; i++) {
+//         let current = arr[i];
+//         for (let j = i + 1; j < arr.length; j++) {
+//             if (arr[j] === current) {
+//                 arr.splice(j, 1);
+//                 j --;
+//             }
+//         }
+//     }
+//     return arr;
+// }
 
 function unique4(arr) {
     let result = [];
@@ -52,5 +53,5 @@ function unique4(arr) {
 
 console.log(unique([1,2,2,3,3,4,3,'1', '2', '1']));
 console.log(unique2([1,2,2,3,3,4,3,'1', '2', '1']));
-console.log(unique3([1,2,2,3,3,4,3,'1', '2', '1']));
+// console.log(unique3([1,2,2,3,3,4,3,'1', '2', '1']));
 console.log(unique4([1,2,2,3,3,4,3,'1', '2', '1']));
