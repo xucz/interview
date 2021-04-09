@@ -1,14 +1,14 @@
 function deepCopy(obj) {
-    let copy = obj instanceof Array ? [] : {};
-    for(let item in obj) {
-        if (Object.prototype.toString.call(obj[item]) === '[object Object]' ||
-            Object.prototype.toString.call(obj[item]) === '[object Array]') {
+    if (Object.prototype.toString.call(obj) === '[object Object]' ||
+        Object.prototype.toString.call(obj) === '[object Array]') {
+        let copy = Object.prototype.toString.call(obj) === '[object Object]' ? {} : [];
+        for (let item in obj) {
             copy[item] = deepCopy(obj[item])
-        } else {
-            copy[item] = obj[item];
         }
+        return copy;
+    } else {
+        return obj;
     }
-    return copy;
 }
 
 let result = deepCopy({
