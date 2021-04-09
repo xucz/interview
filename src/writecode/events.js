@@ -34,11 +34,10 @@ EventsEmiter.prototype.emit = function (name, ...args) {
     return this;
 }
 EventsEmiter.prototype.once = function (name, fn) {
-    const func = (...args) => {
-        this.off(name, fn);
+    this.on(name, function func (...args) {
+        this.off(name, func);
         fn.apply(null, args)
-    }
-    this.on(name, func);
+    });
     return this;
 }
 
