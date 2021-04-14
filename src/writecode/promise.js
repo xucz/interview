@@ -102,6 +102,9 @@ myPromise.prototype.race = function (promises) {
     })
 }
 myPromise.resolve = function (value) {
+    if (value instanceof myPromise) {
+        return value;
+    }
     return new myPromise((resolve) => {
         resolve(value);
     })
