@@ -16,9 +16,9 @@ function throttle(fn, wait) {
 
 // 首次立即执行，然后一定时间内，不再执行
 function throttle2(fn, wait) {
-    let  pre = new Date();
+    let  pre = 0;
     return function(...args) {
-        let now = new  Date();
+        let now = new Date().getTime();
         if (now - pre >= wait) {
             fn.apply(this, args);
             pre = now;
